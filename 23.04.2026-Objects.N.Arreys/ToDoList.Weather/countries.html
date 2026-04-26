@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .country-card { 
+            border: 1px solid #ddd; 
+            margin: 10px; 
+            padding: 15px; 
+            display: inline-block; 
+            width: 180px; 
+            text-align: center; 
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        img { width: 120px; height: auto; border: 1px solid #eee; }
+        h2 { color: #333; }
+    </style>
+</head>
+<body>
+    <h2>Featured South Asian Countries</h2>
+    <div id="countries-container">Loading data...</div>
+
+    <script>
+        async function fetchSpecificCountries() {
+            const container = document.getElementById('countries-container');
+            // Using ISO codes for precision: BT (Bhutan), IN (India), NP (Nepal)
+            const codes = 'bt,in,np';
+            const url = `https://restcountries.com/v3.1/alpha?codes=${codes}&fields=name,flags`;
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Network response was not ok');
+                
+                const countries = await res.json();
+                container.innerHTML = ''; // Clear loading text
+
+                countries.forEach(country => {
+                    const card = document.createElement('div');
+                    card.className = 'country-card';
+                    card.innerHTML = `
+                        <img src="${country.flags.png}" alt="Flag of ${country.name.common}">
+                        <p><strong>${country.name.common}</strong></p>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                container.innerText = "Error fetching country data: " + err.message;
+            }
+        }
+        fetchSpecificCountries();
+    </script>
+</body>
+</html>
